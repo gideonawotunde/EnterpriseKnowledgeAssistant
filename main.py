@@ -1,17 +1,35 @@
-from EnterpriseKnowledgeAssistant.chunker import chunk_text
 from pdf_handler import read_pdf
+from chunker import chunk_text
+from embeddings import create_embeddings
+from vector_store import store_chunks
+
 
 def main():
-    file_path = input("Enter the PDF path: ")
 
+    file_path = input("Enter PDF path: ")
+
+    print("\nReading PDF...")
     text = read_pdf(file_path)
 
+    if not text.strip():
+        print("No text found in PDF.")
+        return
+
+    print("Splitting document into chunks...")
     chunks = chunk_text(text)
 
-    print(f"\nNumber of chunks: {len(chunks)}\n")
-    print("\nFirst chunk:\n")
+    print(f"Created {len(chunks)} chunks.")
 
-    print(chunks[0])
+    print("\nCreating embeddings...")
+    embeddings = create_embeddings(chunks)
+
+    print(f"Created {len(embeddings)} embeddings.")
+
+    print("\nStoring in ChromaDB...")
+    store_chunks(chunks, embeddings)
+
+    print("\n✅ Document successfully indexed!")
+
 
 if __name__ == "__main__":
     main()
