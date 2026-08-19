@@ -93,15 +93,20 @@ User question:
 {question}
 """
 
-    print("\nGenerating answer...")
+    try:
+        response = client.models.generate_content(
+            model="gemini-3.6-flash",
+            contents=prompt
+        )
 
-    response = client.models.generate_content(
-        model="gemini-3.6-flash",
-        contents=prompt
-    )
+        print("\nAnswer:\n")
+        print(response.text)
 
-    print("\nAnswer:\n")
-    print(response.text)
+    except Exception as e:
+        print("\nUnable to generate an answer right now.")
+        print("Please try again in a moment.")
+        print(f"\nError: {e}")
+        return
 
     print("\nSources:")
 

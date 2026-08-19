@@ -7,6 +7,12 @@ collection = client.get_or_create_collection(
     name="enterprise_documents"
 )
 
+def delete_document(document_name):
+    collection.delete(
+        where={"document": document_name}
+    )
+
+    print(f"Removed existing chunks for {document_name}.")
 
 def store_chunks(chunks, embeddings, document_name):
     ids = [f"{document_name}_chunk_{i}" for i in range(len(chunks))]
@@ -31,7 +37,8 @@ def store_chunks(chunks, embeddings, document_name):
 def search_chunks(query_embedding, n_results=3):
     results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=n_results
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"]
     )
 
     return results
