@@ -1,3 +1,4 @@
+import os.path
 from pdf_handler import read_pdf
 from chunker import chunk_text
 from embeddings import create_embeddings
@@ -26,7 +27,8 @@ def main():
     print(f"Created {len(embeddings)} embeddings.")
 
     print("\nStoring in ChromaDB...")
-    store_chunks(chunks, embeddings)
+    document_name = os.path.basename(file_path)
+    store_chunks(chunks, embeddings, document_name)
 
     print("\n✅ Document successfully indexed!")
 

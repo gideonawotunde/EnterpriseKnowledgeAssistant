@@ -8,13 +8,22 @@ collection = client.get_or_create_collection(
 )
 
 
-def store_chunks(chunks, embeddings):
-    ids = [f"chunk_{i}" for i in range(len(chunks))]
+def store_chunks(chunks, embeddings, document_name):
+    ids = [f"{document_name}_chunk_{i}" for i in range(len(chunks))]
+
+    metadatas = [
+        {
+            "document": document_name,
+            "chunk": i
+        }
+        for i in range(len(chunks))
+    ]
 
     collection.add(
         ids=ids,
         documents=chunks,
-        embeddings=embeddings
+        embeddings=embeddings,
+        metadatas=metadatas
     )
 
     print(f"Stored {len(chunks)} chunks in ChromaDB.")

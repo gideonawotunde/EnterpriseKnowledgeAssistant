@@ -29,6 +29,16 @@ def main():
 
     documents = results["documents"][0]
 
+    metadatas = results["metadatas"][0]
+
+    sources = []
+
+    for metadata in metadatas:
+        document = metadata["document"]
+        chunk = metadata["chunk"]
+
+        sources.append(f"{document} — Chunk {chunk}")
+
     context = "\n\n---\n\n".join(documents)
 
     prompt = f"""
@@ -58,6 +68,11 @@ User question:
 
     print("\nAnswer:\n")
     print(response.text)
+
+    print("\nSources:")
+
+    for source in sources:
+        print(f"- {source}")
 
 
 if __name__ == "__main__":
