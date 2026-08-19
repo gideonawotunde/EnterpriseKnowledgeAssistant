@@ -7,13 +7,6 @@ collection = client.get_or_create_collection(
     name="enterprise_documents"
 )
 
-def delete_document(document_name):
-    collection.delete(
-        where={"document": document_name}
-    )
-
-    print(f"Removed existing chunks for {document_name}.")
-
 def store_chunks(chunks, embeddings, document_name):
 
     ids = [
@@ -43,6 +36,21 @@ def store_chunks(chunks, embeddings, document_name):
     )
 
     print(f"Stored {len(chunks)} chunks in ChromaDB.")
+
+def document_exists(document_name):
+    results = collection.get(
+        where={"document": document_name},
+        limit=1
+    )
+
+    return len(results["ids"]) > 0
+
+def delete_document(document_name):
+    collection.delete(
+        where={"document": document_name}
+    )
+
+    print(f"Removed existing chunks for {document_name}.")
 
 def search_chunks(query_embedding, n_results=3):
     results = collection.query(

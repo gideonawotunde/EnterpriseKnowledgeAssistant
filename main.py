@@ -2,7 +2,7 @@ import os.path
 from pdf_handler import read_pdf
 from chunker import chunk_text
 from embeddings import create_embeddings
-from vector_store import store_chunks, delete_document
+from vector_store import store_chunks, document_exists, delete_document
 
 
 def main():
@@ -33,6 +33,18 @@ def main():
     print("\nStoring in ChromaDB...")
 
     document_name = file_path.split("/")[-1]
+
+    if document_exists(document_name):
+
+        print(f"\n{document_name} is already indexed.")
+
+        choice = input("Do you want to replace it? (y/n): ").strip().lower()
+
+        if choice != "y":
+            print("Indexing cancelled.")
+            return
+
+        delete_document(document_name)
 
     store_chunks(chunks, embeddings, document_name)
 
