@@ -28,18 +28,26 @@ def main():
     results = search_chunks(question_embedding, n_results=3)
 
     documents = results["documents"][0]
-
     metadatas = results["metadatas"][0]
 
     sources = []
+    context_parts = []
 
-    for metadata in metadatas:
-        document = metadata["document"]
-        chunk = metadata["chunk"]
+    for document, metadata in zip(documents, metadatas):
+        document_name = metadata["document"]
+        chunk_number = metadata["chunk"]
 
-        sources.append(f"{document} — Chunk {chunk}")
+        sources.append(
+            f"{document_name} — Chunk {chunk_number}"
+        )
 
-    context = "\n\n---\n\n".join(documents)
+        context_parts.append(
+            f"""--- Source: {document_name} | Chunk: {chunk_number} ---
+
+    {document}"""
+        )
+
+    context = "\n\n".join(context_parts)
 
     prompt = f"""
 You are an enterprise document assistant.
