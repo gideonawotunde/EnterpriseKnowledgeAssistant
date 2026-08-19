@@ -1,0 +1,64 @@
+import os
+
+from dotenv import load_dotenv
+from google import genai
+
+from embeddings import create_embeddings
+from vector_store import search_chunks
+
+load_dotenv()
+
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    raise ValueError("GEMINI_API_KEY was not found in the environment.")
+
+client = genai.Client(api_key=api_key)
+
+def main():
+
+    question = input("Enter your question: ")
+
+    print("\nCreating question embedding...")
+
+    question_embedding = create_embeddings([question])[0]
+
+    print("Searching ChromaDB...")
+
+    results = search_chunks(question_embedding, n_results=3)
+
+    documents = results["documents"][0]
+
+    context = "\n\n---\n\n".join(documents)
+
+    prompt = f"""
+You are an enterprise document assistant.
+
+Answer the user's question using ONLY the information
+provided in the document context below.
+
+If the answer cannot be found in the context, say:
+"I could not find that information in the document."
+
+Do not make up information.
+
+Document context:
+{context}
+
+User question:
+{question}
+"""
+
+    print("\nGenerating answer...")
+
+    response = client.models.generate_content(
+        model="gemini-3.6-flash",
+        contents=prompt
+    )
+
+    print("\nAnswer:\n")
+    print(response.text)
+
+
+if __name__ == "__main__":
+    main()

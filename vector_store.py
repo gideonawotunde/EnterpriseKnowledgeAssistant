@@ -19,6 +19,14 @@ def store_chunks(chunks, embeddings):
 
     print(f"Stored {len(chunks)} chunks in ChromaDB.")
 
+def search_chunks(query_embedding, n_results=3):
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results
+    )
+
+    return results
+
 # if __name__ == "__main__":
 #
 #     test_chunks = [
