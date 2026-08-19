@@ -37,10 +37,24 @@ def main():
         print("\nI could not find relevant information in the document.")
         return
 
+    relevant_documents = []
+    relevant_metadatas = []
+    relevant_distances = []
+
+    for document, metadata, distance in zip(
+            documents,
+            metadatas,
+            distances
+    ):
+        if distance <= RELEVANCE_THRESHOLD:
+            relevant_documents.append(document)
+            relevant_metadatas.append(metadata)
+            relevant_distances.append(distance)
+
     sources = []
     context_parts = []
 
-    for document, metadata, distance in zip(documents, metadatas, distances):
+    for document, metadata, distance in zip(relevant_documents, relevant_metadatas, relevant_distances):
         document_name = metadata["document"]
         chunk_number = metadata["chunk"]
 
