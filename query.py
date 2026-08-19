@@ -25,15 +25,22 @@ def main():
 
     print("Searching ChromaDB...")
 
-    results = search_chunks(question_embedding, n_results=3)
+    results = search_chunks(question_embedding, n_results=5)
 
     documents = results["documents"][0]
     metadatas = results["metadatas"][0]
+    distances = results["distances"][0]
+
+    RELEVANCE_THRESHOLD = 0.7
+
+    if distances[0] > RELEVANCE_THRESHOLD:
+        print("\nI could not find relevant information in the document.")
+        return
 
     sources = []
     context_parts = []
 
-    for document, metadata in zip(documents, metadatas):
+    for document, metadata, distance in zip(documents, metadatas, distances):
         document_name = metadata["document"]
         chunk_number = metadata["chunk"]
 
@@ -45,6 +52,11 @@ def main():
             f"""--- Source: {document_name} | Chunk: {chunk_number} ---
 
     {document}"""
+        )
+        print(
+            f"Retrieved: {document_name} |" 
+            f"Chunk: {chunk_number} |" 
+            f"Distance: {distance:.4f}"
         )
 
     context = "\n\n".join(context_parts)
