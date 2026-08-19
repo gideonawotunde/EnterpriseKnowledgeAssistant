@@ -11,31 +11,29 @@ def main():
     document_name = os.path.basename(file_path)
 
     print("\nReading PDF...")
-    text = read_pdf(file_path)
+    pages = read_pdf(file_path)
 
-    if not text.strip():
+    if not pages:
         print("No text found in PDF.")
         return
 
     print("Splitting document into chunks...")
-    chunks = chunk_text(text)
+    chunks = chunk_text(pages)
 
     print(f"Created {len(chunks)} chunks.")
 
     print("\nCreating embeddings...")
-    embeddings = create_embeddings(chunks)
+
+    chunk_texts = [chunk["text"] for chunk in chunks]
+
+    embeddings = create_embeddings(chunk_texts)
 
     print(f"Created {len(embeddings)} embeddings.")
 
-    print("\nChecking for existing document...")
-
-    delete_document(document_name)
-
     print("\nStoring in ChromaDB...")
-    store_chunks(chunks, embeddings, document_name)
 
-    print("\nStoring in ChromaDB...")
-    document_name = os.path.basename(file_path)
+    document_name = file_path.split("/")[-1]
+
     store_chunks(chunks, embeddings, document_name)
 
     print("\n✅ Document successfully indexed!")

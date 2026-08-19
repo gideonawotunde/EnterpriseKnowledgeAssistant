@@ -1,28 +1,36 @@
-def chunk_text(text, chunk_size=1000, overlap=200):
+def chunk_text(pages, chunk_size=1000, overlap=200):
     """
-    Splits text into overlapping chunks.
+    Splits PDF pages into overlapping chunks while preserving page information.
 
     Args:
-        text (str): The document text.
+        pages (list[dict]): PDF pages containing page number and text.
         chunk_size (int): Maximum characters per chunk.
         overlap (int): Number of overlapping characters.
 
     Returns:
-        list[str]
+        list[dict]: Chunks containing text and page information.
     """
 
     chunks = []
 
-    start = 0
+    for page in pages:
 
-    while start < len(text):
+        page_number = page["page"]
+        text = page["text"]
 
-        end = start + chunk_size
+        start = 0
 
-        chunk = text[start:end]
+        while start < len(text):
 
-        chunks.append(chunk)
+            end = start + chunk_size
 
-        start += chunk_size - overlap
+            chunk = text[start:end]
+
+            chunks.append({
+                "text": chunk,
+                "page": page_number
+            })
+
+            start += chunk_size - overlap
 
     return chunks

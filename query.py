@@ -58,8 +58,10 @@ def main():
         document_name = metadata["document"]
         chunk_number = metadata["chunk"]
 
+        page_number = metadata["page"]
+
         sources.append(
-            f"{document_name} — Chunk {chunk_number}"
+            f"{document_name} — Page {page_number} — Chunk {chunk_number}"
         )
 
         context_parts.append(
@@ -68,8 +70,9 @@ def main():
     {document}"""
         )
         print(
-            f"Retrieved: {document_name} |" 
-            f"Chunk: {chunk_number} |" 
+            f"Retrieved: {document_name} | " 
+            f"Page: {metadata['page']} | " 
+            f"Chunk: {chunk_number} | " 
             f"Distance: {distance:.4f}"
         )
 

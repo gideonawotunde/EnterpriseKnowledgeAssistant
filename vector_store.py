@@ -15,19 +15,29 @@ def delete_document(document_name):
     print(f"Removed existing chunks for {document_name}.")
 
 def store_chunks(chunks, embeddings, document_name):
-    ids = [f"{document_name}_chunk_{i}" for i in range(len(chunks))]
+
+    ids = [
+        f"{document_name}_chunk_{i}"
+        for i in range(len(chunks))
+    ]
 
     metadatas = [
         {
             "document": document_name,
+            "page": chunk["page"],
             "chunk": i
         }
-        for i in range(len(chunks))
+        for i, chunk in enumerate(chunks)
+    ]
+
+    documents = [
+        chunk["text"]
+        for chunk in chunks
     ]
 
     collection.add(
         ids=ids,
-        documents=chunks,
+        documents=documents,
         embeddings=embeddings,
         metadatas=metadatas
     )
